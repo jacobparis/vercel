@@ -14,7 +14,6 @@ import {
 import type { BuildPushParams, ContainerEngine } from './engines/types';
 import { buildAndPushWithLifecycle } from './buildpacks/lifecycle';
 import type { BuildpackDescriptor } from './buildpacks/registry';
-import { requestedBuildpack } from './buildpacks/registry';
 import { resolveImageSource } from './image-source';
 import { resolveOidcTokenForBuild } from './oidc';
 import { ensureRepository } from './registry';
@@ -47,12 +46,7 @@ export { diagnostics } from './diagnostics';
 function resolveFunctionSourceFile(options: BuildOptions): string {
   const entrypoint = readString(options.entrypoint) ?? '';
   if (entrypoint === '<detect>') {
-    return (
-      findDockerfile(
-        options.workPath,
-        requestedBuildpack(options.config) !== undefined
-      ) ?? entrypoint
-    );
+    return findDockerfile(options.workPath) ?? entrypoint;
   }
   return entrypoint;
 }
